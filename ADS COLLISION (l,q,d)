@@ -1,0 +1,84 @@
+#include <stdio.h>
+
+#define SIZE 10
+#define EMPTY -1
+
+void init(int table[]) {
+    for (int i = 0; i < SIZE; i++)
+        table[i] = EMPTY;
+}
+
+int hash1(int key) {
+    return key % SIZE;
+}
+
+int hash2(int key) {
+    return 7 - (key % 7);   // used only for double hashing
+}
+
+void linearProbing(int table[], int key) {
+    int index = hash1(key);
+
+    while (table[index] != EMPTY)
+        index = (index + 1) % SIZE;
+
+    table[index] = key;
+}
+
+void quadraticProbing(int table[], int key) {
+    int index = hash1(key);
+    int i = 1;
+
+    while (table[(index + i * i) % SIZE] != EMPTY)
+        i++;
+
+    table[(index + i * i) % SIZE] = key;
+}
+
+void doubleHashing(int table[], int key) {
+    int index = hash1(key);
+    int step = hash2(key);
+    int i = 0;
+
+    while (table[(index + i * step) % SIZE] != EMPTY)
+        i++;
+
+    table[(index + i * step) % SIZE] = key;
+}
+
+void display(int table[]) {
+    printf("\nHash Table:\n");
+    for (int i = 0; i < SIZE; i++)
+        printf("%d → %d\n", i, table[i]);
+}
+
+int main() {
+    int table[SIZE];
+    int n, key, choice;
+
+    printf("Choose Collision Resolution:\n");
+    printf("1. Linear Probing\n");
+    printf("2. Quadratic Probing\n");
+    printf("3. Double Hashing\n");
+    scanf("%d", &choice);
+
+    init(table);
+
+    printf("Enter number of keys: ");
+    scanf("%d", &n);
+
+    printf("Enter %d keys:\n", n);
+    for (int i = 0; i < n; i++) {
+        scanf("%d", &key);
+
+        if (choice == 1)
+            linearProbing(table, key);
+        else if (choice == 2)
+            quadraticProbing(table, key);
+        else if (choice == 3)
+            doubleHashing(table, key);
+    }
+
+    display(table);
+    return 0;
+}
